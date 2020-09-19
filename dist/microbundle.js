@@ -27,6 +27,7 @@ var gzipSize = _interopDefault(require('gzip-size'));
 var brotliSize = _interopDefault(require('brotli-size'));
 var prettyBytes = _interopDefault(require('pretty-bytes'));
 var vue = _interopDefault(require('rollup-plugin-vue'));
+var css = _interopDefault(require('rollup-plugin-css-only'));
 
 /**
  * @type {import('@babel/core')}
@@ -887,7 +888,11 @@ function createConfig(options, entry, format, writeMeta) {
       }), commonjs({
         // use a regex to make sure to include eventual hoisted packages
         include: /\/node_modules\//
-      }), vue(), json(), {
+      }), css(), vue({
+        needMap: false,
+        // fix: Error: Multiple conflicting contents for sourcemap source
+        css: true
+      }), json(), {
         // We have to remove shebang so it doesn't end up in the middle of the code somewhere
         transform: code => ({
           code: code.replace(/^#![^\n]*/, bang => {

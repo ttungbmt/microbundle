@@ -30,6 +30,7 @@ import {
 import { getConfigFromPkgJson, getName } from './lib/package-info';
 import { shouldCssModules, cssModulesConfig } from './lib/css-modules';
 import vue from 'rollup-plugin-vue'
+import css from 'rollup-plugin-css-only'
 
 // Extensions to use when resolving modules
 const EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.es6', '.es', '.mjs'];
@@ -456,7 +457,11 @@ function createConfig(options, entry, format, writeMeta) {
 						// use a regex to make sure to include eventual hoisted packages
 						include: /\/node_modules\//,
 					}),
-					vue(),
+					css(),
+					vue({
+						needMap: false, // fix: Error: Multiple conflicting contents for sourcemap source
+						css: true
+					}),
 					json(),
 					{
 						// We have to remove shebang so it doesn't end up in the middle of the code somewhere
